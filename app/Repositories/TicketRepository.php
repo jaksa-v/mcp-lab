@@ -69,4 +69,9 @@ class TicketRepository
 
         return $ticket->load(['requester:id,name', 'assignee:id,name']);
     }
+
+    public function delete(Ticket $ticket): void
+    {
+        $ticket->delete();
+    }
 }

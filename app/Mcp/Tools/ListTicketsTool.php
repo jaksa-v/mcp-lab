@@ -14,9 +14,11 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[Name('list_tickets')]
 #[Description('List helpdesk tickets the current user can see. Requesters only see their own. Filter by status or priority.')]
+#[IsReadOnly]
 class ListTicketsTool extends Tool
 {
     public function __construct(private TicketRepository $tickets) {}

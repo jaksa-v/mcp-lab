@@ -11,9 +11,11 @@ use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Tool;
+use Laravel\Mcp\Server\Tools\Annotations\IsReadOnly;
 
 #[Name('get_ticket')]
 #[Description('Read one ticket by id, including subject, body, status, requester, and assignee.')]
+#[IsReadOnly]
 class GetTicketTool extends Tool
 {
     public function __construct(private TicketRepository $tickets) {}
