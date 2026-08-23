@@ -1,5 +1,6 @@
 <?php
 
+use App\Mcp\Servers\TicketsServer;
 use Laravel\Mcp\Facades\Mcp;
 
-// Mcp::web('/mcp/demo', \App\Mcp\Servers\PublicServer::class);
+Mcp::local('tickets', TicketsServer::class);

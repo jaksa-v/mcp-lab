@@ -8,6 +8,11 @@ use App\Models\User;
 
 class TicketPolicy
 {
+    public function viewAny(User $user): bool
+    {
+        return $user->exists;
+    }
+
     public function view(User $user, Ticket $ticket): bool
     {
         return $user->role->isStaff() || $ticket->requester()->is($user);
