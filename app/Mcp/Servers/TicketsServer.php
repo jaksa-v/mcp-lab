@@ -2,6 +2,8 @@
 
 namespace App\Mcp\Servers;
 
+use App\Mcp\Prompts\DraftReplyPrompt;
+use App\Mcp\Prompts\TriageTicketPrompt;
 use App\Mcp\Resources\PlaybookResource;
 use App\Mcp\Resources\QueueResource;
 use App\Mcp\Resources\TicketResource;
@@ -22,7 +24,7 @@ use Laravel\Mcp\Server\Tool;
 
 #[Name('Northwind Tickets')]
 #[Version('0.0.1')]
-#[Instructions('Northwind Support tickets. Use list_tickets to see what is open, then get_ticket for the full dossier. Open tickets with create_ticket, then add_comment, set_status, or assign_ticket. Triage rules live at desk://playbook. Local Cursor has no HTTP session, so this process signs in as Sam the agent.')]
+#[Instructions('Northwind Support tickets. Use list_tickets to see what is open, then get_ticket for the full dossier. Open tickets with create_ticket, then add_comment, set_status, or assign_ticket. Use draft_reply to compose an answer, or triage_ticket to classify a ticket. Triage rules live at desk://playbook. Local Cursor has no HTTP session, so this process signs in as Sam the agent.')]
 class TicketsServer extends Server
 {
     /**
@@ -50,7 +52,8 @@ class TicketsServer extends Server
      * @var array<int, class-string<Prompt>>
      */
     protected array $prompts = [
-        //
+        DraftReplyPrompt::class,
+        TriageTicketPrompt::class,
     ];
 
     protected function boot(): void
