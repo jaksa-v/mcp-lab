@@ -55,3 +55,20 @@ function mcpToolContent(TestResponse $response): array
 
     return $items;
 }
+
+/**
+ * @param  array<string, mixed>  $arguments
+ * @return array{jsonrpc: string, id: int, method: string, params: array{name: string, arguments: array<string, mixed>}}
+ */
+function mcpTicketsCall(string $name = 'list_tickets', array $arguments = []): array
+{
+    return [
+        'jsonrpc' => '2.0',
+        'id' => 1,
+        'method' => 'tools/call',
+        'params' => [
+            'name' => $name,
+            'arguments' => $arguments,
+        ],
+    ];
+}

@@ -19,3 +19,6 @@ TestResponse::assertSee only reads content text/data. Resource links (type resou
 
 ## Read tool content through mcpToolContent
 Use mcpToolContent($response) for the result content list. It narrows the mixed JSON-RPC payload so collect() is unnecessary. Freeze time with Carbon::setTestNow, not $this->travelTo — without pest-plugin-phpstan, $this is typed as TestCall.
+
+## Web MCP auth is an HTTP JSON-RPC test
+Prove Sanctum on the web tickets server with POST /mcp/tickets, not TicketsServer::tool(). Import `Pest\Laravel\postJson` and `Pest\Laravel\withToken`; do not call them on `$this` (typed as TestCall without pest-plugin-phpstan). Use mcpTicketsCall() for the JSON-RPC body. Unauthenticated requests must assertUnauthorized (401), not a login redirect.
