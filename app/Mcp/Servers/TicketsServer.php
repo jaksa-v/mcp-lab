@@ -2,6 +2,9 @@
 
 namespace App\Mcp\Servers;
 
+use App\Mcp\Resources\PlaybookResource;
+use App\Mcp\Resources\QueueResource;
+use App\Mcp\Resources\TicketResource;
 use App\Mcp\Tools\GetTicketTool;
 use App\Mcp\Tools\ListTicketsTool;
 use App\Models\User;
@@ -15,7 +18,7 @@ use Laravel\Mcp\Server\Tool;
 
 #[Name('Northwind Tickets')]
 #[Version('0.0.1')]
-#[Instructions('Northwind Support tickets. Use list_tickets to see what is open, then get_ticket for the full dossier. Local Cursor has no HTTP session, so this process signs in as Sam the agent.')]
+#[Instructions('Northwind Support tickets. Use list_tickets to see what is open, then get_ticket for the full dossier. Triage rules live at desk://playbook. Local Cursor has no HTTP session, so this process signs in as Sam the agent.')]
 class TicketsServer extends Server
 {
     /**
@@ -30,7 +33,9 @@ class TicketsServer extends Server
      * @var array<int, class-string<Server\Resource>>
      */
     protected array $resources = [
-        //
+        PlaybookResource::class,
+        QueueResource::class,
+        TicketResource::class,
     ];
 
     /**

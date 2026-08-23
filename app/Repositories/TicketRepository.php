@@ -28,7 +28,11 @@ class TicketRepository
     public function find(int $id): ?Ticket
     {
         return Ticket::query()
-            ->with(['requester:id,name', 'assignee:id,name'])
+            ->with([
+                'requester:id,name',
+                'assignee:id,name',
+                'comments' => fn ($query) => $query->oldest()->with('user:id,name'),
+            ])
             ->find($id);
     }
 }
