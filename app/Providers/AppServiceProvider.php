@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
+use Laravel\Mcp\Client;
+use Laravel\Mcp\Facades\Mcp;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -28,6 +30,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureRateLimiting();
+        $this->registerDirectoryClient();
     }
 
     /**
@@ -60,5 +63,18 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('mcp', function (Request $request): Limit {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    /**
+     * Ticket tools look up people through this named client. Local stdio avoids
+     * deadlocking php artisan serve, which can only handle one HTTP request.
+     */
+    protected function registerDirectoryClient(): void
+    {
+        Mcp::registerClient('directory', fn (): Client => Client::local('php', [
+            'artisan',
+            'mcp:start',
+            'directory',
+        ]));
     }
 }

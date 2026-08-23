@@ -76,11 +76,11 @@ class TicketRepository
         return $ticket->refresh();
     }
 
-    public function assign(Ticket $ticket, User $assignee): Ticket
+    public function assign(Ticket $ticket, int $assigneeId): Ticket
     {
-        $ticket->update(['assignee_id' => $assignee->id]);
+        $ticket->update(['assignee_id' => $assigneeId]);
 
-        return $ticket->load(['requester:id,name', 'assignee:id,name']);
+        return $ticket->refresh();
     }
 
     public function delete(Ticket $ticket): void

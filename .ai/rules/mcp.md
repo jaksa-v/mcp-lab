@@ -22,3 +22,6 @@ Use mcpToolContent($response) for the result content list. It narrows the mixed 
 
 ## Web MCP auth is an HTTP JSON-RPC test
 Prove Sanctum on the web tickets server with POST /mcp/tickets, not TicketsServer::tool(). Import `Pest\Laravel\postJson` and `Pest\Laravel\withToken`; do not call them on `$this` (typed as TestCall without pest-plugin-phpstan). Use mcpTicketsCall() for the JSON-RPC body. Unauthenticated requests must assertUnauthorized (401), not a login redirect.
+
+## Read MCP annotations from annotations()
+Tool::toArray() types annotations as array|object (empty JSON object). Resource::toArray() omits annotations from its array shape. Assert hints via $primitive->annotations(), not toArray()['annotations']['openWorldHint'].

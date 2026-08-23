@@ -6,6 +6,9 @@ use App\Models\User;
 use App\Repositories\TicketRepository;
 use Illuminate\Contracts\JsonSchema\JsonSchema;
 use Illuminate\JsonSchema\Types\Type;
+use Laravel\Mcp\Exceptions\ClientException;
+use Laravel\Mcp\Exceptions\JsonRpcException;
+use Laravel\Mcp\Facades\Mcp;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
@@ -14,7 +17,7 @@ use Laravel\Mcp\Server\Tool;
 use Laravel\Mcp\Server\Tools\Annotations\IsIdempotent;
 
 #[Name('assign_ticket')]
-#[Description('Assign a ticket to a person by user id. Agents and admins only. Calling it again with the same person is a no-op.')]
+#[Description('Assign a ticket to a person by user id. Agents and admins only. Calling it again with the same person is a no-op. Resolves the person through the directory server.')]
 #[IsIdempotent]
 class AssignTicketTool extends Tool
 {
@@ -48,15 +51,16 @@ class AssignTicketTool extends Tool
             return Response::error('Permission denied.');
         }
 
-        $assignee = User::query()->find((int) $validated['assignee_id']);
+        $assigneeId = (int) $validated['assignee_id'];
+        $name = $this->personName($assigneeId);
 
-        if (! $assignee instanceof User) {
+        if ($name === null) {
             return Response::error('No person matches that assignee id.');
         }
 
-        $ticket = $this->tickets->assign($ticket, $assignee);
+        $ticket = $this->tickets->assign($ticket, $assigneeId);
 
-        return Response::text("Assigned ticket #{$ticket->id} to {$assignee->name}.");
+        return Response::text("Assigned ticket #{$ticket->id} to {$name}.");
     }
 
     /**
@@ -72,5 +76,23 @@ class AssignTicketTool extends Tool
                 ->description('The user id of the person who should own the ticket.')
                 ->required(),
         ];
+    }
+
+    private function personName(int $id): ?string
+    {
+        try {
+            $result = Mcp::client('directory')->callTool('get_person', ['id' => $id]);
+        } catch (ClientException|JsonRpcException) {
+            return null;
+        }
+
+        if ($result->isError || ! is_array($result->structuredContent)) {
+            return null;
+        }
+
+        $person = $result->structuredContent['person'] ?? null;
+        $name = is_array($person) ? ($person['name'] ?? null) : null;
+
+        return is_string($name) && $name !== '' ? $name : null;
     }
 }

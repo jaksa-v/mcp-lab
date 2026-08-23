@@ -15,6 +15,15 @@
                 "tickets"
             ],
             "cwd": "/Users/jaksa/Code/Personal/Sites/mcp-lab"
+        },
+        "northwind-directory": {
+            "command": "php",
+            "args": [
+                "artisan",
+                "mcp:start",
+                "directory"
+            ],
+            "cwd": "/Users/jaksa/Code/Personal/Sites/mcp-lab"
         }
     }
 }
