@@ -5,3 +5,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | Applies to | Rule file |
 | --- | --- |
 | tests/Feature/Mcp/** | .ai/rules/mcp.md |
+| app/Mcp/Tools/AssignTicketTool.php | .ai/rules/tools.md |
