@@ -6,4 +6,4 @@ Before planning or editing, find the row whose globs match the file's path and r
 | --- | --- |
 | tests/Feature/Mcp/** | .ai/rules/mcp.md |
 | app/Mcp/Prompts/** | .ai/rules/prompts.md |
-| app/Mcp/Tools/AssignTicketTool.php | .ai/rules/tools.md |
+| app/Mcp/Tools/AssignTicketTool.php, app/Mcp/Tools/ListTicketsTool.php | .ai/rules/tools.md |

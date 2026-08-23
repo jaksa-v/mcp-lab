@@ -13,3 +13,9 @@ To assert a primitive is hidden, TicketsServer::actingAs($user) then (new Ticket
 
 ## Split expect()->not after mixin matchers
 Do not chain ->not onto toContain() (or other mixin matchers). PHPStan types the matcher return as Pest\Mixins\Expectation, which has no $not. Start a second expect($value)->not->toContain(...).
+
+## Inspect resource links and content meta via mcpRpc
+TestResponse::assertSee only reads content text/data. Resource links (type resource_link) and content _meta are invisible to it. Use mcpRpc($response) from tests/Pest.php to read the raw JSON-RPC result. Generator tools: assertSentNotification / assertNotificationCount for yielded notifications; the final result still holds the text payloads.
+
+## Read tool content through mcpToolContent
+Use mcpToolContent($response) for the result content list. It narrows the mixed JSON-RPC payload so collect() is unnecessary. Freeze time with Carbon::setTestNow, not $this->travelTo — without pest-plugin-phpstan, $this is typed as TestCall.

@@ -37,6 +37,19 @@ class TicketRepository
             ->find($id);
     }
 
+    /**
+     * @return Collection<int, Ticket>
+     */
+    public function listOpenOlderThan(int $days): Collection
+    {
+        return Ticket::query()
+            ->with(['requester:id,name', 'assignee:id,name'])
+            ->where('status', Status::Open)
+            ->where('created_at', '<', now()->subDays($days))
+            ->oldest()
+            ->get();
+    }
+
     public function createFor(User $requester, string $subject, string $body, Priority $priority = Priority::Normal): Ticket
     {
         return Ticket::query()->create([

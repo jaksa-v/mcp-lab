@@ -6,6 +6,7 @@ use App\Mcp\Servers\TicketsServer;
 use App\Mcp\Tools\CreateTicketTool;
 use App\Models\Ticket;
 use App\Models\User;
+use Laravel\Mcp\Server\Transport\FakeTransporter;
 
 test('a requester can open a ticket and cannot delete it', function () {
     $requester = User::factory()->requester()->create();
@@ -53,4 +54,20 @@ test('a missing subject is rejected with a sentence', function () {
         ])
         ->assertHasErrors()
         ->assertSee('Give the ticket a subject, like "Refund for order 4412".');
+});
+
+test('create_ticket advertises version and author metadata', function () {
+    $requester = User::factory()->requester()->create();
+
+    TicketsServer::actingAs($requester);
+
+    $tool = (new TicketsServer(new FakeTransporter))
+        ->createContext()
+        ->tools()
+        ->sole(fn ($candidate) => $candidate->name() === 'create_ticket');
+
+    expect($tool->toArray()['_meta'] ?? [])->toMatchArray([
+        'version' => '1.0',
+        'author' => 'Northwind Support',
+    ]);
 });

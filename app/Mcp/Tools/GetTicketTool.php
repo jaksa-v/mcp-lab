@@ -58,7 +58,7 @@ class GetTicketTool extends Tool
             "Assignee: {$assignee}",
             '',
             $ticket->body,
-        ]));
+        ]))->withMeta(['source' => 'eloquent']);
     }
 
     /**

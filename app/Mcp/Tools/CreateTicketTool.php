@@ -18,6 +18,14 @@ use Laravel\Mcp\Server\Tool;
 #[Description('Open a new helpdesk ticket as the signed-in user. Requesters open tickets for themselves.')]
 class CreateTicketTool extends Tool
 {
+    /**
+     * @var array<string, mixed>
+     */
+    protected ?array $meta = [
+        'version' => '1.0',
+        'author' => 'Northwind Support',
+    ];
+
     public function __construct(private TicketRepository $tickets) {}
 
     public function handle(Request $request): Response

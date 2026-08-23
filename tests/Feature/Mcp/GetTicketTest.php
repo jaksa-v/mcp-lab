@@ -53,3 +53,17 @@ test('a missing ticket returns a useful error', function () {
         ->assertHasErrors()
         ->assertSee('No ticket matches that id');
 });
+
+test('get_ticket marks the response as coming from eloquent', function () {
+    $agent = User::factory()->agent()->create();
+    $ticket = Ticket::factory()->create();
+
+    $response = TicketsServer::actingAs($agent)
+        ->tool(GetTicketTool::class, ['ticket_id' => $ticket->id])
+        ->assertOk();
+
+    $first = mcpToolContent($response)[0] ?? [];
+    $meta = $first['_meta'] ?? null;
+
+    expect(is_array($meta) ? $meta : [])->toMatchArray(['source' => 'eloquent']);
+});

@@ -11,6 +11,7 @@ use App\Mcp\Resources\QueueResource;
 use App\Mcp\Resources\TicketResource;
 use App\Mcp\Tools\AddCommentTool;
 use App\Mcp\Tools\AssignTicketTool;
+use App\Mcp\Tools\CloseStaleTicketsTool;
 use App\Mcp\Tools\CreateTicketTool;
 use App\Mcp\Tools\DeleteTicketTool;
 use App\Mcp\Tools\GetTicketTool;
@@ -19,6 +20,7 @@ use App\Mcp\Tools\SetStatusTool;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Mcp\Server;
+use Laravel\Mcp\Server\Attributes\Icon;
 use Laravel\Mcp\Server\Attributes\Instructions;
 use Laravel\Mcp\Server\Attributes\Name;
 use Laravel\Mcp\Server\Attributes\Version;
@@ -27,6 +29,7 @@ use Laravel\Mcp\Server\Tool;
 
 #[Name('Northwind Tickets')]
 #[Version('0.0.1')]
+#[Icon('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" fill="%23111827"/></svg>', mimeType: 'image/svg+xml', sizes: ['32x32'])]
 #[Instructions('Northwind Support tickets. Use list_tickets to see what is open, then get_ticket for the full dossier. Open tickets with create_ticket, then add_comment, set_status, or assign_ticket. Use draft_reply to compose an answer, or triage_ticket to classify a ticket. Admins can delete_ticket. Staff can use weekly_review and desk://kb/escalation. Triage rules live at desk://playbook. Local Cursor has no HTTP session, so this process signs in as Sam the agent.')]
 class TicketsServer extends Server
 {
@@ -41,6 +44,7 @@ class TicketsServer extends Server
         SetStatusTool::class,
         AssignTicketTool::class,
         DeleteTicketTool::class,
+        CloseStaleTicketsTool::class,
     ];
 
     /**
