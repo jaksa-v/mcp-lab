@@ -2,14 +2,18 @@
 
 use App\Models\Ticket;
 use App\Models\User;
+use Laravel\Passport\Passport;
 
 use function Pest\Laravel\postJson;
 use function Pest\Laravel\withToken;
 
 test('a request without a token is rejected', function () {
-    postJson('/mcp/tickets', mcpTicketsCall())
-        ->assertUnauthorized()
-        ->assertHeader('WWW-Authenticate', 'Bearer realm="mcp", error="invalid_token"');
+    $response = postJson('/mcp/tickets', mcpTicketsCall())
+        ->assertUnauthorized();
+
+    expect((string) $response->headers->get('WWW-Authenticate'))
+        ->toContain('Bearer realm="mcp"')
+        ->toContain('.well-known/oauth-protected-resource/mcp/tickets');
 });
 
 test('a request with a garbage token is rejected', function () {
@@ -18,7 +22,7 @@ test('a request with a garbage token is rejected', function () {
         ->assertUnauthorized();
 });
 
-test('sam can list tickets with a personal access token', function () {
+test('sam can list tickets with a passport token', function () {
     $sam = User::factory()->agent()->create([
         'email' => 'sam@northwind.test',
         'name' => 'Sam Carter',
@@ -27,8 +31,9 @@ test('sam can list tickets with a personal access token', function () {
         'subject' => 'Warehouse door is jammed',
     ]);
 
-    withToken($sam->createToken('inspector')->plainTextToken)
-        ->postJson('/mcp/tickets', mcpTicketsCall())
+    Passport::actingAs($sam, ['mcp:use']);
+
+    postJson('/mcp/tickets', mcpTicketsCall())
         ->assertOk()
         ->assertJsonPath('result.structuredContent.tickets.0.subject', 'Warehouse door is jammed');
 });

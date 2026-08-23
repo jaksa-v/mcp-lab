@@ -21,7 +21,10 @@ TestResponse::assertSee only reads content text/data. Resource links (type resou
 Use mcpToolContent($response) for the result content list. It narrows the mixed JSON-RPC payload so collect() is unnecessary. Freeze time with Carbon::setTestNow, not $this->travelTo — without pest-plugin-phpstan, $this is typed as TestCall.
 
 ## Web MCP auth is an HTTP JSON-RPC test
-Prove Sanctum on the web tickets server with POST /mcp/tickets, not TicketsServer::tool(). Import `Pest\Laravel\postJson` and `Pest\Laravel\withToken`; do not call them on `$this` (typed as TestCall without pest-plugin-phpstan). Use mcpTicketsCall() for the JSON-RPC body. Unauthenticated requests must assertUnauthorized (401), not a login redirect.
+Prove web MCP auth with POST /mcp/tickets or POST /mcp/directory, not TicketsServer::tool(). Import `Pest\Laravel\postJson` and `Pest\Laravel\withToken`; do not call them on `$this` (typed as TestCall without pest-plugin-phpstan). Use mcpTicketsCall() for the JSON-RPC body. Unauthenticated requests must assertUnauthorized (401), not a login redirect.
 
 ## Read MCP annotations from annotations()
 Tool::toArray() types annotations as array|object (empty JSON object). Resource::toArray() omits annotations from its array shape. Assert hints via $primitive->annotations(), not toArray()['annotations']['openWorldHint'].
+
+## Both web MCP servers share one OAuth dance
+Both web MCP servers are Passport. Unauthenticated POST /mcp/tickets or /mcp/directory returns 401 with WWW-Authenticate resource_metadata for that path, not Sanctum's invalid_token. Prove discovery for both protected-resource URLs, POST /oauth/register, the authorize Blade view, PKCE code exchange, then mcpTicketsCall against tickets and directory with the same access token. Passport::actingAs is only a shortcut. Import Pest\Laravel HTTP helpers; do not call them on $this.

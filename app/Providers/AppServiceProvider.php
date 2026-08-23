@@ -12,6 +12,7 @@ use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Mcp\Client;
 use Laravel\Mcp\Facades\Mcp;
+use Laravel\Passport\Passport;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -30,6 +31,7 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureRateLimiting();
+        $this->configurePassport();
         $this->registerDirectoryClient();
     }
 
@@ -63,6 +65,14 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('mcp', function (Request $request): Limit {
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
+    }
+
+    /**
+     * The MCP authorize screen is Blade from the package. Do not rewrite it in React.
+     */
+    protected function configurePassport(): void
+    {
+        Passport::authorizationView('mcp.authorize');
     }
 
     /**
