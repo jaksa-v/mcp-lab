@@ -4,6 +4,8 @@ Before planning or editing, find the row whose globs match the file's path and r
 
 | Applies to | Rule file |
 | --- | --- |
+| config/cors.php | .ai/rules/config.md |
+| app/Mcp/{Tools/SearchKbTool.php,Resources/ArticleResource.php,Resources/EscalationResource.php} | .ai/rules/mcp-tools.md |
 | tests/Feature/Mcp/** | .ai/rules/mcp.md |
 | app/Mcp/Prompts/** | .ai/rules/prompts.md |
 | app/Mcp/{Resources/QueueApp.php,Tools/ShowQueueTool.php,Tools/GetQueueDataTool.php} | .ai/rules/resources.md |

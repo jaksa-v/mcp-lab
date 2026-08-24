@@ -1,11 +1,11 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/react-starter-kit",
+    "name": "mcp-lab/northwind",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
+    "description": "A Laravel gym for Laravel MCP. Fake Northwind Support helpdesk.",
     "keywords": [
         "laravel",
-        "framework"
+        "mcp"
     ],
     "license": "MIT",
     "require": {
@@ -16,7 +16,6 @@
         "laravel/framework": "^13.17",
         "laravel/mcp": "^0.9.4",
         "laravel/passport": "^13.7",
-        "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
         "laravel/wayfinder": "^0.1.14"
     },

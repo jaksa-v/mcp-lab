@@ -43,6 +43,7 @@ Triage every ticket before you assign it.
 
 - Open queue: `desk://queue`
 - One ticket: `desk://tickets/{id}`
+- Knowledge base: `search_kb`, then `desk://kb/{slug}`
 - Tools: `list_tickets`, `get_ticket`
 MARKDOWN);
     }

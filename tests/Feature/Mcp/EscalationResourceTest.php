@@ -61,5 +61,5 @@ test('a requester cannot read the escalation article', function () {
     TicketsServer::actingAs($requester)
         ->resource(EscalationResource::class)
         ->assertHasErrors()
-        ->assertSee('Resource [desk://kb/escalation] not found.');
+        ->assertSee('No article matches that slug.');
 });

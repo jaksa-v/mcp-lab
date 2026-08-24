@@ -2,8 +2,8 @@
 
 namespace App\Mcp\Resources;
 
-use App\Models\Article;
 use App\Models\User;
+use App\Repositories\ArticleRepository;
 use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Attributes\Description;
@@ -20,6 +20,8 @@ use Laravel\Mcp\Server\Resource;
 #[MimeType('text/markdown')]
 class EscalationResource extends Resource
 {
+    public function __construct(private ArticleRepository $articles) {}
+
     public function shouldRegister(Request $request): bool
     {
         $user = $request->user();
@@ -35,7 +37,7 @@ class EscalationResource extends Resource
             return Response::error('You must be signed in.');
         }
 
-        $article = Article::query()->where('slug', 'escalation')->first();
+        $article = $this->articles->findBySlug('escalation');
 
         if ($article === null) {
             return Response::error('No escalation article is published.');

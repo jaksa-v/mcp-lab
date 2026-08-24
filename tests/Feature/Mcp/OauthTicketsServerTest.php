@@ -7,7 +7,9 @@ use Illuminate\Support\Str;
 use function Pest\Laravel\actingAs;
 use function Pest\Laravel\get;
 use function Pest\Laravel\getJson;
+use function Pest\Laravel\options;
 use function Pest\Laravel\postJson;
+use function Pest\Laravel\withHeaders;
 use function Pest\Laravel\withToken;
 
 test('oauth discovery advertises both web servers and mcp scope', function () {
@@ -28,6 +30,52 @@ test('oauth discovery advertises both web servers and mcp scope', function () {
         ->assertOk()
         ->assertJsonPath('resource', url('/mcp/directory'))
         ->assertJsonPath('scopes_supported.0', 'mcp:use');
+});
+
+test('inspector on another localhost port can preflight oauth discovery', function () {
+    $origin = 'http://localhost:6274';
+
+    options('/.well-known/oauth-authorization-server', [], [
+        'Origin' => $origin,
+        'Access-Control-Request-Method' => 'GET',
+    ])
+        ->assertSuccessful()
+        ->assertHeader('Access-Control-Allow-Origin', $origin)
+        ->assertHeader('Access-Control-Allow-Methods');
+
+    withHeaders(['Origin' => $origin])
+        ->getJson('/.well-known/oauth-authorization-server')
+        ->assertOk()
+        ->assertHeader('Access-Control-Allow-Origin', $origin)
+        ->assertJsonPath('token_endpoint', route('passport.token'));
+});
+
+test('inspector can preflight the token and mcp routes', function () {
+    $origin = 'http://127.0.0.1:6274';
+
+    options('/oauth/token', [], [
+        'Origin' => $origin,
+        'Access-Control-Request-Method' => 'POST',
+        'Access-Control-Request-Headers' => 'content-type',
+    ])
+        ->assertSuccessful()
+        ->assertHeader('Access-Control-Allow-Origin', $origin);
+
+    options('/mcp/tickets', [], [
+        'Origin' => $origin,
+        'Access-Control-Request-Method' => 'POST',
+        'Access-Control-Request-Headers' => 'authorization,content-type',
+    ])
+        ->assertSuccessful()
+        ->assertHeader('Access-Control-Allow-Origin', $origin);
+});
+
+test('a 401 from the web ticket server exposes www-authenticate to the browser', function () {
+    withHeaders(['Origin' => 'http://localhost:6274'])
+        ->postJson('/mcp/tickets', mcpTicketsCall())
+        ->assertUnauthorized()
+        ->assertHeader('Access-Control-Allow-Origin', 'http://localhost:6274')
+        ->assertHeader('Access-Control-Expose-Headers', 'WWW-Authenticate');
 });
 
 test('dynamic registration creates a public mcp client', function () {
